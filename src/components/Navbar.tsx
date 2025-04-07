@@ -2,9 +2,10 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Variant, motion, AnimatePresence, easeInOut } from "framer-motion";
-import { ChevronDown, Menu } from "lucide-react";
+import { ChevronDown, LogOut, Menu } from "lucide-react";
 import Link from "next/link";
 import Solutionhover from "./Solutionhover";
+import { useSession, signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import Openup from "./SigninModal";
 
@@ -14,6 +15,10 @@ export default function Navbar() {
   const [login, setLogin] = useState(false);
 
   const [toggle, setToggle] = useState<number>(1);
+
+  //  this is the use session area
+
+  const { status, data } = useSession();
   return (
     <>
       <Openup isOpen={login} setIsOpen={setLogin} />
@@ -153,16 +158,30 @@ export default function Navbar() {
         </div>
 
         <div className=" flex items-center gap-2">
-          <Button
-            className=" border-zinc-950  "
-            variant={"outline"}
-            size={"default"}
-            onClick={() => {
-              setLogin(true);
-            }}
-          >
-            Get started
-          </Button>
+          {status === "authenticated" ? (
+            <Button
+              className=" border-zinc-950  "
+              variant={"outline"}
+              size={"default"}
+              onClick={() => {
+                signOut();
+              }}
+            >
+              <LogOut />
+              LougOut
+            </Button>
+          ) : (
+            <Button
+              className=" border-zinc-950  "
+              variant={"outline"}
+              size={"default"}
+              onClick={() => {
+                setLogin(true);
+              }}
+            >
+              Get started
+            </Button>
+          )}
 
           <div className="h-10 w-10 bg-muted-foreground rounded-full "></div>
         </div>
